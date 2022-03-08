@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Dispatch History</title>
+<link href="css/bootstrap-4.3.1.css" rel="stylesheet" type="text/css">
+<style>
+body {
+background-image: url('images/wallpaper.jpg');
+}
+</style>
+</head>
+
+<body>
+<div class="container" style="width:930px">
+<?php
+	include "header.php";
+?>
+
+ <div class="form-group row">
+	<table class="table table-striped">
+	<tbody>
+		<tr>
+			<th></th>
+			<th>Caller Name</th>
+			<th>Phone Number</th>
+			<th>Incident Type</th>
+			<th>Incident Location</th>
+			<th>Incident Desc</th>
+			<th>Incident Status</th>
+			<th>Time Called</th>
+		</tr>
+	</tbody>
+	<?php
+require_once "db.php";
+	$conn = new mysqli(DB_SERVER,DB_USER,DB_PASSWORD,DB_DATABASE);
+	$sql = "SELECT incident.caller_name, incident.phone_number, incident_type.incident_type_desc, incident.incident_location,
+	incident.incident_desc, incident.time_called, incident_status.incident_status_desc from incident inner join incident_type on incident.incident_type_id = incident_type.incident_type_id inner join incident_stauts on incident.incident_status_id = incident_status.incident_status_id where incident.incident_desc like " . "'%" . $descriptionOfIncident . "%'";
+	
+	$result = $conn->query($sql);
+	$incidents = [];
+	while($row = $result->fetch_assoc()){
+		$callername = $row["caller_name"];
+		$phonenum = $row["phone_number"];
+		$incident_type = $row["incident_type_desc"];
+		$incidentl = $row["incident_location"];
+		$incidentd = $row["incident_desc"];
+		$timec = $row["time_called"];
+		$status = $row["incident_status_desc"];
+		$incidents = ["caller_name"=>$callername, "phone_number"=>$phonenum, "incident_type_desc"=>$incident_type, "incident_location"=>$incidentl, "incident_desc"=>$incidentd,"time_called"=>$timec, "incident_status_desc"=>$status, "time_called"=>$timec,];
+		array_push($incidents,$incident);
+	}
+?>
+	<?php
+				foreach($incidents as $incident) {
+					echo "<tr>" .
+				"<td>" . "" . "</td>" .
+				"<td>" . $incident["caller_name"] . "</td>" .
+				"<td>" . $incident["phone_number"] . "</td>" .
+				"<td>" . $incident["incident_type_desc"] . "</td>" .
+				"<td>" . $incident["incident_location"] . "</td>" .
+				"<td>" . $incident["incident_desc"] . "</td>"  .
+				"<td>" . $incident["incident_status_desc"] . "</td>" .
+				"<td>" . $incident["time_called"] . "</td>"  .
+				"</tr>"; }
+			?>
+		
+</table>
+</div>
+<?php
+			include "footer.php"
+		?>
+				 </div>
+	<script src="js/jquery-3.3.1.min.js"></script>
+	<script src="js/popper.min.js"></script>			 
+	<script src="js/bootstrap-4.0.0.js"></script>
+</body>
+</html>
